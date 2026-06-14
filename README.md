@@ -1,50 +1,102 @@
 # 🗳️ Indian E-Voting & Blockchain Simulation Portal
 
-A secure, decentralized, constituency-aware E-Voting portal representing a next-generation administrative framework for the Election Commission of India (ECI). This system synchronizes national geographic boundary datasets with localized smart contracts running on an Ethereum-compatible consensus layer.
+<div align="center">
+
+[![Solidity Version](https://img.shields.io/badge/Solidity-%5E0.8.19-363636?style=flat-square&logo=solidity)](https://soliditylang.org/)
+[![React Version](https://img.shields.io/badge/React-18.x-61DAFB?style=flat-square&logo=react)](https://react.dev/)
+[![Node Version](https://img.shields.io/badge/Node.js-%3E%3D18-339933?style=flat-square&logo=node.js)](https://nodejs.org/)
+[![Database](https://img.shields.io/badge/MongoDB-6.x-47A248?style=flat-square&logo=mongodb)](https://www.mongodb.com/)
+[![Hardhat](https://img.shields.io/badge/Hardhat-3.x-F8FAFC?style=flat-square&logo=hardhat)](https://hardhat.org/)
+[![License](https://img.shields.io/badge/License-MIT-blue.svg?style=flat-square)](https://opensource.org/licenses/MIT)
+
+*A secure, decentralized, constituency-aware digital polling and audit dashboard representing a modern administrative framework for the Election Commission of India (ECI).*
+
+</div>
 
 ---
 
-## ⚡ System Architecture
+## 📸 Portal Interface
 
-The application comprises three core components:
+Here is the live rendering of the **Uttar Pradesh Electoral Map** following an automated smart-contract verified simulation run, showing real-time constituency results directly queried from the Ethereum blockchain:
+
+<div align="center">
+  <img src="screenshots/uttar_pradesh_results.png" alt="Uttar Pradesh Results" width="850px" style="border-radius: 10px; box-shadow: 0 4px 20px rgba(0,0,0,0.15);"/>
+</div>
+
+---
+
+## ⚡ System Architecture & Data Flow
+
+The portal maps state and constituency boundary records in MongoDB directly to an on-chain smart contract ledger, keeping web clients reactive via real-time transaction tracking.
+
+```mermaid
+sequenceDiagram
+    autonumber
+    actor Admin as ECI Administrator
+    participant Portal as React Frontend
+    participant Server as Express Backend
+    participant DB as MongoDB
+    participant Ledger as BallotBox Contract
+
+    Admin->>Portal: Trigger Realistic Simulation
+    activate Portal
+    Portal->>Server: POST /api/admin/simulate-election
+    activate Server
+    Server->>DB: Fetch active boundaries (e.g. Varanasi, Lucknow)
+    DB-->>Server: Return PC metadata
+    
+    loop For each PC segment
+        Server->>Ledger: Call publishConstituencyResults(pcId, votes...)
+        activate Ledger
+        Ledger-->>Server: Tx mined & logged
+        deactivate Ledger
+    end
+    
+    Server->>DB: Update ElectionPhase to "Results"
+    Server-->>Portal: Respond "Simulation Completed"
+    deactivate Server
+    
+    Portal->>Ledger: Call isConstituencyResultsPublished(pcId)
+    Ledger-->>Portal: Returns true (Verified)
+    Portal->>Portal: Render certified winner & statistics
+    deactivate Portal
+```
+
+---
+
+## 📂 Project Structure
 
 ```
-                  ┌──────────────────────┐
-                  │   Vite React Client  │
-                  └──────────┬───────────┘
-                             │ (REST/HTTP)
-                             ▼
-                  ┌──────────────────────┐
-                  │ Express Node Server  │
-                  └────┬────────────┬────┘
-                       │            │
-         (Mongoose)    │            │ (Ethers.js provider)
-                       ▼            ▼
-             ┌───────────┐    ┌───────────┐
-             │  MongoDB  │    │  Hardhat  │
-             └───────────┘    └───────────┘
+📂 indian-e-voting/
+├── 📂 backend/               # Node Express API & Seeding Framework
+│   ├── 📂 config/            # Electoral roll & Disqualified lists
+│   ├── 📂 controllers/       # Geographical query controllers
+│   ├── 📂 models/            # Mongoose Schemas (Boundaries, Phases)
+│   ├── 📂 routes/            # Admin & Public voting endpoints
+│   ├── 📂 scripts/           # Seeding scripts (MongoDB & Blockchain)
+│   └── 📄 server.js          # Server entrypoint
+│
+├── 📂 blockchain/            # Solidity Smart Contracts & Hardhat
+│   ├── 📂 contracts/         # BallotBox.sol (Consensus ledger)
+│   ├── 📂 scripts/           # Deployment scripts targeting Localhost
+│   └── 📄 hardhat.config.js  # Network configs & compiler optimization
+│
+├── 📂 frontend/              # Vite React Client
+│   ├── 📂 src/
+│   │   ├── 📂 components/    # EciControlVault, ResultsDashboard, Maps
+│   │   ├── 📄 App.jsx        # Routing configuration
+│   │   └── 📄 index.css      # Core HSL color palettes & styles
+│   └── 📄 vite.config.js     # Dev server & port configurations
+│
+└── 📄 README.md              # Project Documentation
 ```
-
-1. **`frontend` (React + Vite + Tailwind/CSS):** 
-   - Interactive, state-wise SVGs representing the **543 Parliamentary Constituencies**.
-   - Real-time Results Dashboard reflecting certified votes directly from the ledger.
-   - **ECI Control Vault** providing live progress bars for simulations.
-
-2. **`backend` (Express + Mongoose):**
-   - Serves election metadata, state statistics, and geographical boundaries.
-   - Interfaces with MongoDB to verify administrative credentials and manage phases.
-   - Exposes simulation endpoints that automatically trigger smart contract consensus writes.
-
-3. **`blockchain` (Solidity + Hardhat 3):**
-   - **`BallotBox.sol`** contract managing candidate nominations, zone authorization, and constituency-specific vote registries.
-   - Built on role-based access control (`eciAdmin` authorization flow).
 
 ---
 
 ## 🛠️ Technology Stack
 
-- **Client:** React 18, Vite, HSL-harmonized CSS, Tailwind CSS.
-- **Server:** Node.js, Express.js, MongoDB (Mongoose).
+- **Client:** React 18 (SPA), React Router, HSL tailored CSS, Tailwind CSS.
+- **Server:** Node.js, Express.js (REST APIs), Mongoose.
 - **Consensus:** Solidity `^0.8.19`, Ethers.js v6, Hardhat v3.
 
 ---
@@ -76,7 +128,7 @@ Configure environment variables and populate MongoDB and the smart contract:
 ```bash
 cd backend
 npm install
-# Create/verify backend/.env file:
+# Verify/create backend/.env file:
 # PORT=5000
 # MONGO_URI=mongodb://localhost:27017/indian-e-voting
 # VOTING_CONTRACT_ADDRESS=0x5FbDB2315678afecb367f032d93F642f64180aa3

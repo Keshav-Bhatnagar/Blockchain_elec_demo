@@ -1,0 +1,27 @@
+# ==========================================
+# E-Voting System Requirements
+# ==========================================
+
+# 1. System Runtime Requirements
+node >= 18.0.0
+npm >= 9.0.0
+mongodb >= 6.0.0
+
+# 2. Key Backend Node Modules (package.json)
+express >= 5.2.1
+mongoose >= 9.7.0
+ethers >= 6.16.0
+dotenv >= 17.4.2
+bcryptjs >= 3.0.3
+jsonwebtoken >= 9.0.3
+cors >= 2.8.6
+
+# 3. Key Blockchain/Consensus Modules (package.json)
+hardhat >= 3.9.0
+@nomicfoundation/hardhat-toolbox >= 7.0.0
+
+# 4. Key Frontend Modules (package.json)
+react >= 18.2.0
+react-dom >= 18.2.0
+react-router-dom >= 6.22.0
+vite >= 5.1.0
