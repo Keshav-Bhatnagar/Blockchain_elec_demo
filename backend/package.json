@@ -1,0 +1,31 @@
+{
+  "name": "backend",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "start": "node server.js",
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "seed:deps": "node scripts/seedManagers.js",
+    "seed:india": "node scripts/seedIndiaComplete.js",
+    "seed:blockchain": "node scripts/seedBlockchain.js",
+    "seed:parties": "node scripts/seedParties.js",
+    "seed:all": "npm run seed:india && npm run seed:blockchain && npm run seed:parties"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "type": "module",
+  "dependencies": {
+    "axios": "^1.17.0",
+    "bcryptjs": "^3.0.3",
+    "cors": "^2.8.6",
+    "dotenv": "^17.4.2",
+    "ethers": "^6.16.0",
+    "express": "^5.2.1",
+    "jsonwebtoken": "^9.0.3",
+    "mongoose": "^9.7.0",
+    "multer": "^2.1.1",
+    "puppeteer": "^25.1.0"
+  }
+}
